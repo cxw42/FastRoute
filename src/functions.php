@@ -1,4 +1,5 @@
 <?php
+// The file loaded by the autoloader
 
 namespace FastRoute;
 

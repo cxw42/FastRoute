@@ -2,3 +2,9 @@
 
 # ignore lock file since we have no extra dependencies
 composer.lock
+
+# Editor backup files
+.*.swp
+*~
+~*
+
