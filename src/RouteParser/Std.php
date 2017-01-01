@@ -37,7 +37,7 @@ REGEX;
 
         $currentRoute = '';
         $routeDatas = [];
-        foreach ($segments as $n => $segment) {
+        foreach ($segments as $n => $segment) {     // shortest to longest
             if ($segment === '' && $n !== 0) {
                 throw new BadRouteException("Empty optional part");
             }
