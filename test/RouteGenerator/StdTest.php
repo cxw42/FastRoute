@@ -3,15 +3,35 @@
 namespace FastRoute\RouteGenerator;
 
 class StdTest extends \PhpUnit_Framework_TestCase {
+    protected $routeData;
+    protected $collector;
+
+    public function populateRoutes(\FastRoute\RouteCollector $r) {
+        $this->collector = $r;
+        $r->addRoute('GET', '/users', 'get_all_users_handler', 'users');
+        // {id} must be a number (\d+)
+        $r->addRoute('GET', '/user/{id:\d+}', 'get_user_handler', 'user');
+        // The /{title} suffix is optional
+        $r->addRoute('GET', '/articles/{id:\d+}[/{title}]', 'get_article_handler',
+                        'article');
+    } //populateRoutes
+
+    protected function setUp() {
+        $dispatcher = \FastRoute\simpleDispatcher([$this,'populateRoutes']);
+        $this->routeData = $this->collector->getParsedRoutes();
+        #print_r($this->routeData);
+    }
+
     /** @dataProvider provideTestGen */
-    public function testGen($routeString, $expectedRouteDatas) {
-        $parser = new Std();
-        $routeDatas = $parser->parse($routeString);
-        $this->assertSame($expectedRouteDatas, $routeDatas);
+    public function testGen($routeName, $vars, $expectedRouteString) {
+        $gen = new Std($this->routeData);
+        $routeString = $gen->gen($routeName, $vars);
+        $this->assertSame($expectedRouteString, $routeString);
+        //$this->assertTrue(true);
     }
 
     /** @dataProvider provideTestGenError */
-    public function testGenError($routeString, $expectedExceptionMessage) {
+    public function TODO_testGenError($routeString, $expectedExceptionMessage) {
         $parser = new Std();
         $this->setExpectedException('FastRoute\\BadRouteException', $expectedExceptionMessage);
         $parser->parse($routeString);
@@ -19,96 +39,11 @@ class StdTest extends \PhpUnit_Framework_TestCase {
 
     public function provideTestGen() {
         return [
-            [
-                '/test',
-                [
-                    ['/test'],
-                ]
-            ],
-            [
-                '/test/{param}',
-                [
-                    ['/test/', ['param', '[^/]+']],
-                ]
-            ],
-            [
-                '/te{ param }st',
-                [
-                    ['/te', ['param', '[^/]+'], 'st']
-                ]
-            ],
-            [
-                '/test/{param1}/test2/{param2}',
-                [
-                    ['/test/', ['param1', '[^/]+'], '/test2/', ['param2', '[^/]+']]
-                ]
-            ],
-            [
-                '/test/{param:\d+}',
-                [
-                    ['/test/', ['param', '\d+']]
-                ]
-            ],
-            [
-                '/test/{ param : \d{1,9} }',
-                [
-                    ['/test/', ['param', '\d{1,9}']]
-                ]
-            ],
-            [
-                '/test[opt]',
-                [
-                    ['/test'],
-                    ['/testopt'],
-                ]
-            ],
-            [
-                '/test[/{param}]',
-                [
-                    ['/test'],
-                    ['/test/', ['param', '[^/]+']],
-                ]
-            ],
-            [
-                '/{param}[opt]',
-                [
-                    ['/', ['param', '[^/]+']],
-                    ['/', ['param', '[^/]+'], 'opt']
-                ]
-            ],
-            [
-                '/test[/{name}[/{id:[0-9]+}]]',
-                [
-                    ['/test'],
-                    ['/test/', ['name', '[^/]+']],
-                    ['/test/', ['name', '[^/]+'], '/', ['id', '[0-9]+']],
-                ]
-            ],
-            [
-                '',
-                [
-                    [''],
-                ]
-            ],
-            [
-                '[test]',
-                [
-                    [''],
-                    ['test'],
-                ]
-            ],
-            [
-                '/{foo-bar}',
-                [
-                    ['/', ['foo-bar', '[^/]+']]
-                ]
-            ],
-            [
-                '/{_foo:.*}',
-                [
-                    ['/', ['_foo', '.*']]
-                ]
-            ],
+            'users' => [ 'users', [], '/users' ],
+            'user42' => [ 'user', ['id'=>42], '/user/42'],
+            'article1' => ['article',['id'=>1],'/articles/1'],
+            'article999name' =>
+                ['article',['id'=>999,'title'=>'foo'],'/articles/999/foo'],
         ];
     }
 

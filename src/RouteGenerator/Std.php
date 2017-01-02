@@ -6,13 +6,28 @@ use FastRoute\BadRouteException;
 use FastRoute\RouteGenerator;
 
 /**
- * Generate route strings 
+ * Generate route strings
  *
  * E.g., gen('user', array('name'=>'hello')) -> '/user/hello'
  */
 class Std implements RouteGenerator {
     private $parsedRoutes;  // from the RouteCollector
     private $shouldValidate;
+
+    /**
+     * Determine which placeholders a particular branch needs
+     */
+    private function valsNeededByBranch($branch) {
+        $retval = [];
+        foreach($branch as $piece) {
+            if(is_array($piece)) {
+                $retval[] = $piece[0];
+            }
+        }
+        return $retval;
+    } //valsNeededByBranch
+
+    // === Public ========================================================
 
     /**
      * Creates a new generator
@@ -31,17 +46,17 @@ class Std implements RouteGenerator {
     } //__construct
 
     public function gen($routename, $values = []) {
-        if(!in_array($routename, $this->parsedRoutes)) {
+        if(!array_key_exists($routename, $this->parsedRoutes)) {
             throw new BadRouteException("Can't generate URL for unknown route $routename");
         }
 
-        $haveVals = keys($values);  // which placeholders, if any, we have
+        $haveVals = array_keys($values);  // which placeholders, if any, we have
         $routeData = $this->parsedRoutes[$routename];
 
         for($branchidx = count($routeData)-1; $branchidx >= 0; --$branchidx) {
 
             // Do we have the pieces we need?
-            $valsNeeded = valsNeededByBranch($routeData[$branchidx]);
+            $valsNeeded = $this->valsNeededByBranch($routeData[$branchidx]);
             $matches = array_intersect($haveVals, $valsNeeded);
             if(count($matches) !== count($valsNeeded)) {
                 continue;
@@ -64,18 +79,5 @@ class Std implements RouteGenerator {
         // If we get here, we didn't match.
         throw new BadRouteException("Incorrect parameters for $routename");
     } //gen()
-
-    /**
-     * Determine which placeholders a particular branch needs
-     */
-    private function valsNeededByBranch($branch) {
-        $retval = [];
-        foreach($branch as $piece) {
-            if(is_array($piece)) {
-                $retval[] = $piece[0];
-            }
-        }
-        return $retval;
-    } //valsNeededByBranch
 
 }
