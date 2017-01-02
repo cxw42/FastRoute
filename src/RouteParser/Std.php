@@ -8,7 +8,10 @@ use FastRoute\RouteParser;
 /**
  * Parses route strings of the following form:
  *
- * "/user/{name}[/{id:[0-9]+}]"
+ * `"/user/{name}[/{id:[0-9]+}]"`
+ *
+ * Returns branches in order from shortest to longest as required by
+ * RouteGenerator\Std.
  */
 class Std implements RouteParser {
     const VARIABLE_REGEX = <<<'REGEX'

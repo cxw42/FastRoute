@@ -30,7 +30,10 @@ class Std implements RouteGenerator {
     // === Public ========================================================
 
     /**
-     * Creates a new generator
+     * Creates a new generator based on route data from RouteParser\Std.
+     *
+     * Requires branches within each route listed in order from
+     * shortest to longest, which RouteParser\Std provides.
      *
      * @param array $parsedRoutes Parsed route data from RouteCollector.
      *              $parsedRoutes is a hash from route name to an array
@@ -38,11 +41,14 @@ class Std implements RouteGenerator {
      *              array of pieces of the route.
      * @param boolean $shouldValidate (optional, default false) If true, check
      *          provided parameters to make sure they fit the regexes for
-     *          the placeholders.
+     *          the placeholders.  **Not yet implemented.**
      */
     public function __construct($parsedRoutes, $shouldValidate = false) {
         $this->parsedRoutes = $parsedRoutes;
         $this->shouldValidate = $shouldValidate;
+        if($shouldValidate) {
+            throw new \Exception('$shouldValidate is not yet implemented.');
+        }
     } //__construct
 
     public function gen($routename, $values = []) {

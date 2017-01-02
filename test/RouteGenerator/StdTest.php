@@ -2,6 +2,9 @@
 
 namespace FastRoute\RouteGenerator;
 
+/**
+ * Test \FastRoute\RouteGenerator\Std
+ */
 class StdTest extends \PhpUnit_Framework_TestCase {
     protected $routeData;
     protected $collector;

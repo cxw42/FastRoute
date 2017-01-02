@@ -8,9 +8,13 @@ interface RouteParser {
      *
      * The expected output is defined using an example:
      *
-     * For the route string "/fixedRoutePart/{varName}[/moreFixed/{varName2:\d+}]", if {varName} is interpreted as
-     * a placeholder and [...] is interpreted as an optional route part, the expected result is:
+     * For the route string
+     * `"/fixedRoutePart/{varName}[/moreFixed/{varName2:\d+}]"`,
+     * if `{varName}` is interpreted as
+     * a placeholder and `[...]` is interpreted as an optional route part,
+     * the expected result is:
      *
+     * ```php
      * [
      *     // first route: without optional part
      *     [
@@ -25,13 +29,13 @@ interface RouteParser {
      *         ["varName2", [0-9]+"],
      *     ],
      * ]
+     * ```
      *
-     * Here one route string was converted into two route data arrays.
-     *
-     * The route data arrays must be listed from shortest to longest.
+     * Here one route string was converted into two route data arrays,
+     * referred to as "branches".
      *
      * @param string $route Route string to parse
-     * 
+     *
      * @return mixed[][] Array of route data arrays
      */
     public function parse($route);
