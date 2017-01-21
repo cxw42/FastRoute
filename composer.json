@@ -1,12 +1,16 @@
 {
-  "name": "nikic/fast-route",
-  "description": "Fast request router for PHP",
+  "name": "devwrench/fast-route",
+  "description": "Fast request router for PHP, forked from nikic/fast-route",
   "keywords": ["routing", "router"],
   "license": "BSD-3-Clause",
   "authors": [
     {
       "name": "Nikita Popov",
       "email": "nikic@php.net"
+    },
+    {
+      "name": "Christopher White",
+      "email": "cxwembedded@gmail.com"
     }
   ],
   "require": {
